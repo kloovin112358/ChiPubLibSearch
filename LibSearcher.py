@@ -27,7 +27,7 @@ floor_details_url_end = "?locale=en-US"
 export_list = []
 
 # if you only want to check out X books, might as well stop Python from searching all entries in the CSV file
-stop_after_this_many_books = 1
+stop_after_this_many_books = 6
 
 datareader = pd.read_csv(filename)
 
@@ -69,6 +69,9 @@ for i, row in datareader_shuffled.iterrows():
         )
     if len(export_list) == stop_after_this_many_books:
         break
+
+# sort the list, coutesy of https://stackoverflow.com/a/20099713
+export_list = sorted(export_list, key= lambda x: x[3], reverse=True)
 
 # printing code borrowed courtesy of https://stackoverflow.com/a/13214945
 s = [[str(e) for e in row] for row in export_list]
