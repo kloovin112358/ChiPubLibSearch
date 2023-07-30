@@ -39,7 +39,7 @@ datareader_shuffled = datareader.sample(frac=1)
 # adding this function adds on additional complexity that is not needed depended on the library
 def getFloorOnLibraryBookIsOn(resultHTML):
     # this href link provides the reference ID we need, but the link provided is to an HTML page. We want the JSON version.
-    og_CPL_availability_link = resultHTML.find('a', {'class': 'cp-availability-trigger'}).attrs['href']
+    og_CPL_availability_link = resultHTML.find('a', {'class': 'cp-availability-link'}).attrs['href']
     book_ref_id = og_CPL_availability_link.split("availability/",1)[1]
     floor_details = requests.get(url = floor_details_url_start + book_ref_id + floor_details_url_end)
     floor_details_json = floor_details.json()
@@ -56,7 +56,7 @@ for i, row in datareader_shuffled.iterrows():
     r = requests.get(url = URL_start + insert_into_query + URL_end)
     resultHTML = BeautifulSoup(r.text, "html.parser")
     # we are just pulling the first book entry found in the system
-    callNum = resultHTML.find('span', {'class': 'cp-call-number'})
+    callNum = resultHTML.find('span', {'class': 'call-number'})
     if callNum is not None:
         # once we know a book has been found in the system, we want to pull which floor it is on
         # note that this may only be relevant for some branches - since I use Harold Washington, there are a lot of floors to search through
@@ -73,12 +73,15 @@ for i, row in datareader_shuffled.iterrows():
 # sort the list, coutesy of https://stackoverflow.com/a/20099713
 export_list = sorted(export_list, key= lambda x: x[3], reverse=True)
 
-# printing code borrowed courtesy of https://stackoverflow.com/a/13214945
-s = [[str(e) for e in row] for row in export_list]
-lens = [max(map(len, col)) for col in zip(*s)]
-fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
-table = [fmt.format(*row) for row in s]
-print ('\n'.join(table))
+if len(export_list) > 0:
+    # printing code borrowed courtesy of https://stackoverflow.com/a/13214945
+    s = [[str(e) for e in row] for row in export_list]
+    lens = [max(map(len, col)) for col in zip(*s)]
+    fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
+    table = [fmt.format(*row) for row in s]
+    print ('\n'.join(table))
+else:
+    print("Sorry, none of your selected titles were available at your chosen Chicago Public Library branch.")
 
 # note that this is a simple export format - I plan to just take a photo of the
 # printed output. A more advanced version might create a Google Keep note or send an email to yourself
