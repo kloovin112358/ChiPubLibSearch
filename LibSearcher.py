@@ -27,7 +27,7 @@ floor_details_url_end = "?locale=en-US"
 export_list = []
 
 # if you only want to check out X books, might as well stop Python from searching all entries in the CSV file
-stop_after_this_many_books = 6
+stop_after_this_many_books = 10
 
 datareader = pd.read_csv(filename)
 
@@ -39,7 +39,7 @@ datareader_shuffled = datareader.sample(frac=1)
 # adding this function adds on additional complexity that is not needed depended on the library
 def getFloorOnLibraryBookIsOn(resultHTML):
     # this href link provides the reference ID we need, but the link provided is to an HTML page. We want the JSON version.
-    og_CPL_availability_link = resultHTML.find('a', {'class': 'cp-availability-link'}).attrs['href']
+    og_CPL_availability_link = resultHTML.find('a', {'class': 'availability-link'}).attrs['href']
     book_ref_id = og_CPL_availability_link.split("availability/",1)[1]
     floor_details = requests.get(url = floor_details_url_start + book_ref_id + floor_details_url_end)
     floor_details_json = floor_details.json()
